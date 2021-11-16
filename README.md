@@ -51,7 +51,6 @@ Or eventually you may want to create a playbook:
   tags: wireguard
 ```
 
-## Inventory
 ## Variables example
 
 ```yaml
