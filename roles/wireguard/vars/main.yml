@@ -1,0 +1,5 @@
+_system_arch_map:
+  i386: '386'
+  x86_64: 'amd64'
+
+_system_arch: "{{ _arch_map[ansible_architecture] | default(ansible_architecture) }}"

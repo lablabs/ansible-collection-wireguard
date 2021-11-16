@@ -1,0 +1,14 @@
+#
+# User public key: "{{ item.WireGuardPeer | json_query('[?"PublicKey"].PublicKey') | first }}"
+
+[Interface]
+PrivateKey = [User Private Key]
+Address = {{ item.WireGuardPeer | json_query('[?"AllowedIPs"].AllowedIPs') | first }}
+
+[Peer]
+PublicKey = {{ server_public_key }}
+PresharedKey = {{ preshared_key }}
+AllowedIPs = {{ wireguard_peers_allowed_ips }}
+Endpoint = {{ wireguard_hostname }}:{{ wireguard_port }}
+PersistentKeepalive = {{ (item.WireGuardPeer | json_query('[?"PersistentKeepalive"].PersistentKeepalive') | first) | default(wireguard_keepalive) }}
+

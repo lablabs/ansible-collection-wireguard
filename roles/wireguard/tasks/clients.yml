@@ -1,0 +1,44 @@
+---
+
+# - debug: msg="{{ item.WireGuardPeer | json_query('[?"AllowedIPs"].AllowedIPs') }}"
+#   loop: "{{ peers }}"
+
+# - debug: msg="{{ item.WireGuardPeer | json_query('[?"PublicKey"].PublicKey') }}"
+#   loop: "{{ peers }}"
+
+- name: List of defined clients
+  set_fact:
+    _list_of_defined_clients: "{{ _list_of_defined_clients | default([]) + [item.publickey] }}"
+  with_items: "{{ wireguard_peers }}"
+
+- name: Delete unused client configs
+  shell: |
+    cd "{{ wireguard_clients_dir }}"
+    if [ ! -z "$(grep -L '''"{{ _list_of_defined_clients | join("\|") }}"''' *.conf)" ]; then
+      rm -f $(grep -L '''"{{ _list_of_defined_clients | join("\|") }}"''' *.conf) \
+      && echo "deleted"
+    fi
+  register: _delete_out
+  args:
+    executable: /bin/bash
+  changed_when: "'deleted' in _delete_out.stdout"
+
+- name: Create clients configs
+  template:
+    src: "clients.conf.j2"
+    dest: "{{ wireguard_clients_dir }}/{{ item.WireGuardPeer.0 | json_query('FriendlyName') }}.conf"
+    mode: 0644
+  vars:
+    server_public_key: "{{ _pubkey_value['content'] | b64decode }}"
+    preshared_key: "{{ _pskkey_value['content'] | b64decode }}"
+  loop: "{{ peers | list }}"
+  notify:
+    - restart systemd-networkd
+
+- name: Download client configs
+  fetch:
+    src: "{{ wireguard_clients_dir }}/{{ item.name }}.conf"
+    dest: "{{ wireguard_clients_download_dir }}"
+    flat: true
+  loop: "{{ wireguard_peers | list }}"
+  when: wireguard_download_clients | bool

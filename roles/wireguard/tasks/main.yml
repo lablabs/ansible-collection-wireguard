@@ -1,0 +1,50 @@
+---
+- name: Include OS specific variables
+  include_vars:
+    file: "{{ lookup('first_found', possible_files) }}"
+  vars:
+    possible_files:
+      - "vars/{{ ansible_distribution | lower }}-{{ ansible_distribution_version }}.yml"
+      - "vars/{{ ansible_distribution | lower }}.yml"
+
+- include_tasks: "install/{{ ansible_distribution | lower }}.yml"
+
+- name: Create required dirs
+  file:
+    path: "{{ item }}"
+    owner: root
+    group: systemd-network
+    mode: 0755
+    state: directory
+  loop:
+    - "{{ wireguard_dir }}"
+    - "{{ wireguard_clients_dir }}"
+
+- name: Install WireGuard
+  package:
+    name: "{{ wireguard_packages }}"
+    state: present
+  tags:
+    - wg-install
+
+- name: Enable WireGuard kernel module
+  modprobe:
+    name: wireguard
+    state: present
+  register: wireguard_module_enabled
+  until: wireguard_module_enabled is succeeded
+  retries: 10
+  delay: 10
+  failed_when: wireguard_module_enabled is failure
+  tags:
+    - wg-install
+
+- include_tasks: server.yml
+
+- include_tasks: clients.yml
+
+- name: Cleanup secrets from memory
+  set_fact:
+    _pskkey_value: ""
+    _pubkey_value: ""
+    _privkey_value: ""

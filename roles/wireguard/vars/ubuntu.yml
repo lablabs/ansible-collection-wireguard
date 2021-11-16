@@ -1,0 +1,5 @@
+---
+_distro_packages:
+  - wireguard
+
+_repo_url: ""

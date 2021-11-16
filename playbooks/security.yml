@@ -1,0 +1,10 @@
+---
+- name: Security hardening
+  hosts: all
+  become: true
+  gather_facts: true
+
+  roles:
+    - name: devsec.hardening.ssh_hardening
+    - name: devsec.hardening.os_hardening
+    - name: robertdebock.development_environment.fail2ban

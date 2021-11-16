@@ -1,0 +1,10 @@
+---
+- name: Add WireGuard repository
+  get_url:
+    url: "{{ wireguard_repo_url }}"
+    dest: /etc/yum.repos.d/wireguard.repo
+
+- name: Install EPEL repository
+  yum:
+    name: epel-release
+    update_cache: true

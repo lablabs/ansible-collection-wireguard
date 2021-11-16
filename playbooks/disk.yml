@@ -1,0 +1,28 @@
+---
+- name: Data Disk
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+  - name: Create ext4 partition for on Data disk
+    parted:
+      device: "{{ data_disk | default('/dev/nvme1n1') }}"
+      number: 1
+      state: present
+      fs_type: ext4
+    when: ( configure_data_disk | default(false) )
+
+  - name: Create a ext4 filesystem on additional disk
+    filesystem:
+      fstype: ext4
+      dev: "{{ data_disk_partition | default('/dev/nvme1n1p1') }}"
+    when: ( configure_data_disk | default(false) )
+
+  - name: Mount additional disk
+    mount:
+      path: "{{ data_disk_mount | default('/data') }}"
+      src: "{{ data_disk_partition | default('/dev/nvme1n1p1') }}"
+      fstype: ext4
+      state: mounted
+    when: ( configure_data_disk | default(false) )

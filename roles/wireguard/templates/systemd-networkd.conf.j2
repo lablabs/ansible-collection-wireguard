@@ -1,0 +1,21 @@
+---
+#{{ ansible_managed }}
+#This template was created with role: {{ role_name }}
+
+{% for section_dict in systemd_config %}
+{% for section, options in section_dict.items() %}
+[{{ section }}]
+{% for opt in options %}
+{% for key, val in opt.items() %}
+{% if val is string or val is not iterable %}
+{{ key }}={{ val }}
+{% else %}
+{% for subval in val %}
+{{ key }}={{ subval }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+{% endfor %}
+{% endfor %}

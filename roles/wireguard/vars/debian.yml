@@ -1,0 +1,5 @@
+---
+_distro_packages:
+  - gnupg
+  - "linux-headers-{{ _system_arch }}"
+_repo_url: ""
