@@ -1,6 +1,6 @@
 ---
 - name: Data Disk
-  hosts: all
+  hosts: '{{target|default("all")}}'
   become: true
   gather_facts: true
 

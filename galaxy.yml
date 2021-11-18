@@ -1,10 +1,10 @@
 namespace: lablabs
 name: wireguard
-version: 0.1.0
+version: 0.1.1
 readme: README.md
 authors:
   - Labyrinth Labs <info@lablabs.io>
-description: your collection description
+description: Wireguard Server Ansible Collection.
 license_file: LICENSE
 tags: [wireguard, vpn, system, linux, security, networking]
 dependencies:

@@ -1,6 +1,6 @@
 ---
 - name: Security hardening
-  hosts: all
+  hosts: '{{target|default("all")}}'
   become: true
   gather_facts: true
 

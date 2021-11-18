@@ -1,6 +1,6 @@
 ---
 - name: Wireguard deployment
-  hosts: all
+  hosts: '{{target|default("all")}}'
   become: true
   gather_facts: true
 
