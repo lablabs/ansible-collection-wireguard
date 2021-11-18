@@ -27,17 +27,18 @@ Run Ansible to configure the [Wireguard](https://www.wireguard.com/) server:
 ```bash
 ansible-playbook lablabs.wireguard.disk -i <inventory> --private-key <private key file>
 ansible-playbook lablabs.wireguard.security -i <inventory> --private-key <private key file>
-ansible-playbook lablabs.wireguard.wireguard-i <inventory> --private-key <private key file>
+ansible-playbook lablabs.wireguard.wireguard -i <inventory> --private-key <private key file>
 ```
 
-Or eventually you may want to create a playbook:
+By default all 3 playbooks target `all` hosts in the inventory. You can target specific host or group by using variable `target`:
+
+```bash
+ansible-playbook lablabs.wireguard.wireguard -e taget=wireguard -i <inventory> --private-key <private key file>
+```
+
+You may want to create a playbook to run all 3 playbooks in one run:
 
 ```yaml
-- name: Wireguard Server deployment
-  hosts: wireguard
-  become: true
-  gather_facts: true
-
 - name: Prepare Data disk
   import_playbook: lablabs.wireguard.disk
   tags: disk

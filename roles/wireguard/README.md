@@ -1,7 +1,5 @@
 # Wireguard Ansible role
 
-[<img src="ll-logo.png">](https://lablabs.io/)
-
 This Ansible role will deploy [Wireguard](https://www.wireguard.com/) VPN tunnel and setup peers.
 
 ## Requirements
@@ -116,10 +114,10 @@ It will also download the client configs into the specified directory. Remaining
         allowed_ip: "10.213.213.4"
         publickey: "111111111111111111"
 
-  roles:
-  - role: lablabs.wireguard
-
   tasks:
+  - import_role:
+      name: lablabs.wireguard.wireguard
+
   - name: Install iptables-persistent
     ansible.builtin.package:
       name:
