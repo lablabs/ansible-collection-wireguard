@@ -56,60 +56,76 @@ You may want to create a playbook to run all 3 playbooks in one run:
 
 ```yaml
 ---
-###
-# Data disk config
-configure_data_disk: true
-data_disk: /dev/nvme1n1
-data_disk_partition: /dev/nvme1n1p1
-data_disk_mount: /data
+# Directory to store WireGuard configuration on the remote hosts
+wireguard_dir: /etc/wireguard
+wireguard_clients_dir: "{{ wireguard_dir }}/clients"
 
-###
-# Security hardening
+wireguard_clients_download_dir: clients/
+wireguard_download_clients: false
 
-# SSH
-sftp_enabled: true
-ssh_max_auth_retries: 6
-ssh_permit_tunnel: true
-ssh_allow_tcp_forwarding: true
-ssh_allow_agent_forwarding: true
-ssh_client_alive_count: 100
-ssh_client_alive_interval: 40
+# Predefined wireguard keys, this usually should be defined in ansible-vault
+wireguard_privatekey_path: "{{ wireguard_dir }}/privatekey"
+wireguard_publickey_path: "{{ wireguard_dir }}/publickey"
+wireguard_presharedkey_path: "{{ wireguard_dir }}/presharedkey"
 
-# OS
-sysctl_overwrite:
-  net.ipv4.ip_forward: 1
+wireguard_systemd_path: /etc/systemd/network
 
-###
-# Wireguard deployment
-wireguard_dir: /data/wireguard
-wireguard_address: 10.214.214.0/24
+# Wireguard packages
+wireguard_repo_url: "{{ _repo_url }}"
+wireguard_distro_packages: "{{ _distro_packages }}"
 
-wireguard_clients_download_dir: "{{ lookup('env', 'PWD') }}/clients/"
-wireguard_download_clients: true
+wireguard_packages:
+  - wireguard-dkms
+  - wireguard-tools
 
+# The default port WireGuard will listen if not specified otherwise.
+wireguard_port: 51820
+
+# Client destination Hostname
 wireguard_hostname: "{{ inventory_hostname }}"
 
-wireguard_out_interface: ens5
+# The default interface name that wireguard should use if not specified otherwise.
+wireguard_interface: wg0
 
-wireguard_additional_routes:
-  - 172.11.0.0/16
-  - 172.22.0.0/20
-  - 172.33.0.0/16
+# Base wireguard subnet
+wireguard_address: 10.213.213.0/24
 
-# concat routes defined on ens5 brigde and additional ones
-_wireguard_interface_addr: "{{ ansible_ens5.ipv4.network }}/{{ ansible_ens5.ipv4.netmask }}"
+wireguard_server_ip: "{{ wireguard_address | ipaddr('network') | ipmath(1) }}"
+wireguard_subnetmask: "{{ wireguard_address | ipaddr('prefix') }}"
+
+# XXX: This role only works with PrivateKeyFile/PresharedKeyFile it doesn't support variables.
+wireguard_systemd_netdev:
+  - NetDev:
+      - Name: "{{ wireguard_interface }}"
+      - Kind: wireguard
+      - Description: "wireguard server: {{ wireguard_interface}} server on {{ wireguard_address }}"
+  - WireGuard:
+      - PrivateKey: "{{ _privkey_value['content'] | b64decode }}"
+      - ListenPort: "{{ wireguard_port }}"
+
+wireguard_systemd_network:
+  - Match:
+      - Name: "{{ wireguard_interface }}"
+  - Network:
+      - Address: "{{ wireguard_server_ip }}/{{ wireguard_subnetmask }}"
+  - Route:
+      - Destination: "{{ wireguard_address }}"
+      - Gateway: "{{ wireguard_server_ip }}"
+
+wireguard_keepalive: 25
+
 wireguard_peers_allowed_ips: "{{ ([(_wireguard_interface_addr | ipaddr('net'))] + wireguard_additional_routes) | join(\", \") }}"
-
-wireguard_peers:
-  - name: client1
-    allowed_ip: 10.214.214.101
-    publickey: "12345678900987654321"
-  - name: client2
-    allowed_ip: 10.214.214.102
-    publickey: "qwertyuuiopoiuytrewq"
-  - name: client3
-    allowed_ip: 10.214.214.103
-    publickey: "zxcvbnmzxcvbnmzxc"
+wireguard_peers: []
+  # - name: user1
+  #   allowed_ip: "10.213.213.2/32"
+  #   publickey: "asdasdasdadsasdasd"
+  # - name: user2
+  #   allowed_ip: "10.213.213.3/32"
+  #   publickey: "000000000000000000"
+  #   keepalive: 30
+  # - name: user3
+  #   allowed_ip: "10.213.213.4/32"
+  #   publickey: "111111111111111111"
 ```
 
 ## License
