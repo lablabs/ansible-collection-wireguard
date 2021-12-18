@@ -1,4 +1,5 @@
 ---
 _distro_packages:
   - linux-headers
+  - systemd-networkd
 _repo_url: ""
