@@ -1,6 +1,6 @@
 # Wireguard Server Ansible Collection
 
-[![Ansible-lint](https://github.com/lablabs/ansible-collection-wireguard/actions/workflows/lint.yaml/badge.svg)](https://github.com/lablabs/ansible-collection-wireguard/actions)
+[![Molecule test](https://github.com/lablabs/ansible-collection-wireguard/actions/workflows/molecule.yaml/badge.svg?event=schedule)](https://github.com/lablabs/ansible-collection-wireguard/actions/workflows/molecule.yaml)
 
 [<img src="ll-logo.png">](https://lablabs.io/)
 

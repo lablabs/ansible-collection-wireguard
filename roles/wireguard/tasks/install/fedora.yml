@@ -7,11 +7,9 @@
     gpgkey: "{{ wireguard_repo_url }}/pubkey.gpg"
     gpgcheck: true
 
-# yamllint disable rule:command-instead-of-module
 - name: Force yum update
-  command: yum makecache
+  command: yum makecache # noqa command-instead-of-module
   changed_when: false
-# yamllint enable rule:command-instead-of-module
 
 - name: Install required packages
   yum:
