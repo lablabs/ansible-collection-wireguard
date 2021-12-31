@@ -35,15 +35,10 @@ jobs:
         with:
           path: "${{ github.repository }}"
 
-      # - name: Install test dependencies
-      #   run: |
-      #     sudo pip3 install --upgrade pip
-      #     sudo pip3 install -r lablabs/ansible-collection-wireguard/requirements.txt
-
-      # - name: Set up the test environment
-      #   run: |
-      #     ansible-galaxy collection install devsec.hardening:==7.12.0
-      #     ansible-galaxy collection install robertdebock.development_environment:==2.1.1
+      - name: Install test dependencies
+        run: |
+          sudo pip3 install --upgrade pip
+          sudo pip3 install -r lablabs/ansible-collection-wireguard/requirements.txt
 
       - name: Molecule for Ansible
         uses: robertdebock/molecule-action@2.7.2

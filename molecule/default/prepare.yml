@@ -6,6 +6,5 @@
 
     - name: Install Collections dependency
       ansible.builtin.shell: |
-          pip3 install -r requirements.txt
           ansible-galaxy collection install devsec.hardening:==7.12.0
           ansible-galaxy collection install robertdebock.development_environment:==2.1.1  

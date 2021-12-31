@@ -6,3 +6,11 @@
     baseurl: "{{ wireguard_repo_url }}/fedora-$releasever-$basearch/"
     gpgkey: "{{ wireguard_repo_url }}/pubkey.gpg"
     gpgcheck: true
+
+- name: Install required packages
+  yum:
+    name: "{{ wireguard_distro_packages }}"
+    update_cache: true
+    state: present
+  tags:
+    - wg-install
