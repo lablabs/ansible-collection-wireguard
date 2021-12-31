@@ -1,0 +1,10 @@
+---
+- name: Prepare local runner
+  hosts: localhost
+  connection: local 
+  tasks:
+    - name: Install pip packages
+      ansible.builtin.pip:
+        name: "{{ item }}"
+      loop:
+        - netaddr
