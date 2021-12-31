@@ -21,12 +21,12 @@ verifier:
 scenario:
   name: default
   test_sequence:
-    # - lint
     - destroy
     - syntax
     - dependency
     - create
     - prepare
+    - lint
     - converge
     - idempotence
     - verify
