@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Lint Ansible Playbook
-      uses: ansible/ansible-lint-action@master
+    - name: Molecule for Ansible
+      uses: robertdebock/molecule-action@2.7.2
       with:
-        targets: "roles/wireguard/tasks/"
+        command: lint

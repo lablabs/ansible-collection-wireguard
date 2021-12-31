@@ -3,6 +3,9 @@ dependency:
   name: galaxy
 driver:
   name: docker
+lint: |
+  yamllint -s .
+  ansible-lint --exclude molecule/
 platforms:
   - name: instance
     image: "geerlingguy/docker-${image:-ubuntu2004}-ansible:${tag:-latest}"
@@ -15,3 +18,17 @@ provisioner:
   name: ansible
 verifier:
   name: ansible
+scenario:
+  name: default
+  test_sequence:
+    - lint
+    - destroy
+    - syntax
+    - dependency
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - verify
+    - cleanup
+    - destroy

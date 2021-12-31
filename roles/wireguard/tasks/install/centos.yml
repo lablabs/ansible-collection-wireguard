@@ -8,3 +8,10 @@
   yum:
     name: epel-release
     update_cache: true
+
+- name: Install required packages
+  yum:
+    name: "{{ wireguard_distro_packages }}"
+    state: present
+  tags:
+    - wg-install
