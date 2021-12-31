@@ -8,7 +8,7 @@
     gpgcheck: true
 
 - name: Force yum update
-  command: yum makecache # noqa command-instead-of-module
+  command: yum makecache    # noqa command-instead-of-module
   changed_when: false
 
 - name: Install required packages
