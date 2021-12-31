@@ -1,6 +1,6 @@
 ---
 _distro_packages:
   - gnupg
-  - "linux-headers-{{ _system_arch }}"
+  - linux-headers-generic
   - systemd-networkd
 _repo_url: ""

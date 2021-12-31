@@ -7,10 +7,13 @@
     gpgkey: "{{ wireguard_repo_url }}/pubkey.gpg"
     gpgcheck: true
 
+- name: Force yum update
+  command: yum makecache
+  changed_when: false
+
 - name: Install required packages
   yum:
     name: "{{ wireguard_distro_packages }}"
-    update_cache: true
     state: present
   tags:
     - wg-install

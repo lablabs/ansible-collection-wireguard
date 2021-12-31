@@ -8,7 +8,7 @@ lint: |
   ansible-lint --exclude molecule/
 platforms:
   - name: instance
-    image: "geerlingguy/docker-${image:-ubuntu2004}-ansible:${tag:-latest}"
+    image: "geerlingguy/docker-${image:-debian11}-ansible:${tag:-latest}"
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
