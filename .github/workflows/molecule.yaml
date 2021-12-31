@@ -40,7 +40,7 @@ jobs:
           sudo pip3 install --upgrade pip
           ls -l
           pwd
-          sudo pip3 install -r requirements.txt
+          sudo pip3 install -r ./requirements.txt
 
       - name: Set up the test environment
         run: |
