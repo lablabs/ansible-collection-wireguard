@@ -1,8 +1,0 @@
----
-- name: Install required packages
-  become: true
-  pacman:
-    name: "{{ wireguard_distro_packages }}"
-    state: present
-  tags:
-    - wg-install

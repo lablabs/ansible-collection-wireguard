@@ -1,4 +1,0 @@
----
-_distro_packages:
-  - systemd-networkd
-_repo_url: https://download.copr.fedorainfracloud.org/results/jdoss/wireguard

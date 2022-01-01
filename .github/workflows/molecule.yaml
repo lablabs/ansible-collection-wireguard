@@ -27,8 +27,6 @@ jobs:
             tag: "latest"
           - image: "debian11"
             tag: "latest"
-          - image: "fedora34"
-            tag: "latest"
           - image: "ubuntu2004"
             tag: "latest"
     steps:
@@ -36,11 +34,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: "${{ github.repository }}"
-
-      - name: Install test dependencies
-        run: |
-          sudo pip3 install --upgrade pip
-          sudo pip3 install -r lablabs/ansible-collection-wireguard/requirements.txt
 
       - name: Molecule for Ansible
         uses: robertdebock/molecule-action@2.7.2
