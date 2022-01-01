@@ -1,3 +1,5 @@
+# yamllint disable
+---
 collections:
   - devsec.hardening
   - robertdebock.development_environment
