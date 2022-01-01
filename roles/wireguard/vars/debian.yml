@@ -2,5 +2,4 @@
 _distro_packages:
   - gnupg
   - linux-headers-generic
-  - systemd-networkd
 _repo_url: ""

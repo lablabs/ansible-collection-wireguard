@@ -13,6 +13,15 @@ This collection will:
 3. Install and configure fail2ban (playbook name `security`)
 4. Install and configure wireguard (playbook name `wireguard`)
 
+## Supported Linux Distributions
+
+- CentOS 8
+- Ubuntu 20.04 LTS
+
+### Eventually supported but not tested
+
+- Debian 11 is supported but the system must use `systemd-networkd` networking service instead of `Network Manager`.
+
 ## How to run Ansible playbooks from this collection
 
 First make sure your future destination host is up and running and you have an access to SSH Private Key file.  
