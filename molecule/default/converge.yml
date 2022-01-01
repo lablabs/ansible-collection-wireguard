@@ -1,0 +1,24 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: wireguard
+  vars:
+    wireguard_dir: /data/wireguard
+    wireguard_address: 10.214.214.0/24
+    wireguard_download_clients: true
+    wireguard_additional_routes:
+      - 172.11.0.0/16
+      - 172.22.0.0/20
+      - 172.33.0.0/16
+    wireguard_peers:
+      - name: user1
+        allowed_ip: "10.213.213.2"
+        publickey: "asdasdasdadsasdasd"
+      - name: user2
+        allowed_ip: "10.213.213.3"
+        publickey: "000000000000000000"
+        keepalive: 30
+      - name: user3
+        allowed_ip: "10.213.213.4"
+        publickey: "111111111111111111"

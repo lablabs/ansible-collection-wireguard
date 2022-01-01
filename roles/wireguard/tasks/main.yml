@@ -38,6 +38,7 @@
   failed_when: wireguard_module_enabled is failure
   tags:
     - wg-install
+    - molecule-notest
 
 - include_tasks: server.yml
 

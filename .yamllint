@@ -1,0 +1,8 @@
+---
+ignore: |
+  /github/home/.cache
+
+extends: default
+
+rules:
+  line-length: disable

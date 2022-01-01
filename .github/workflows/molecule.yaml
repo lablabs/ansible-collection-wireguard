@@ -1,0 +1,40 @@
+# yamllint disable
+---
+name: Molecule test
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'roles/wireguard/**'
+      - 'molecule/wireguard/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+  schedule:
+      - cron: '0 1 1 * *'
+
+jobs:
+  standalone:
+    name: Test Wireguard Ansible Role
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        config:
+          - image: "centos8"
+            tag: "latest"
+          - image: "ubuntu2004"
+            tag: "latest"
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          path: "${{ github.repository }}"
+
+      - name: Molecule for Ansible
+        uses: robertdebock/molecule-action@2.7.2
+        with:
+          image: ${{ matrix.config.image }}
+          tag: ${{ matrix.config.tag }}

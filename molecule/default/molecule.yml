@@ -1,0 +1,38 @@
+---
+dependency:
+  name: galaxy
+  options:
+    ignore-certs: True
+    ignore-errors: True
+    requirements-file: collections.yml
+driver:
+  name: docker
+lint: |
+  yamllint -s .
+  ansible-lint --exclude molecule/ --exclude playbooks/
+platforms:
+  - name: instance
+    image: "geerlingguy/docker-${image:-ubuntu2004}-ansible:${tag:-latest}"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: ${MOLECULE_PREBUILT:-true}
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
+scenario:
+  name: default
+  test_sequence:
+    - destroy
+    - syntax
+    - dependency
+    - create
+    - prepare
+    - lint
+    - converge
+    - idempotence
+    - verify
+    - cleanup
+    - destroy
