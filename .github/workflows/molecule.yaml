@@ -38,3 +38,10 @@ jobs:
         with:
           image: ${{ matrix.config.image }}
           tag: ${{ matrix.config.tag }}
+
+      - name: Upload configs
+        uses: actions/upload-artifact@v2
+        with:
+          name: client-configs
+          path: clients/
+          retention-days: 1
