@@ -2,7 +2,7 @@
 - name: Converge
   hosts: all
   roles:
-    - role: wireguard
+    - wireguard
   vars:
     wireguard_dir: /data/wireguard
     wireguard_address: 10.214.214.0/24
