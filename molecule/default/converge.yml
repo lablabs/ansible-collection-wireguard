@@ -6,6 +6,13 @@
       package:
         name: iproute
       when: ansible_os_family == 'RedHat'
+    - name: Re-read network facts
+      setup:
+        gather_subset:
+          - '!all'
+          - '!any'
+          - network
+      when: ansible_os_family == 'RedHat'
   roles:
     - wireguard
   vars:
