@@ -1,8 +1,20 @@
 ---
 - name: Converge
   hosts: all
+  pre_tasks:
+    - name: Install Prereqs
+      package:
+        name: iproute
+      when: ansible_os_family == 'RedHat'
+    - name: Re-read network facts
+      setup:
+        gather_subset:
+          - '!all'
+          - '!any'
+          - network
+      when: ansible_os_family == 'RedHat'
   roles:
-    - role: wireguard
+    - wireguard
   vars:
     wireguard_dir: /data/wireguard
     wireguard_address: 10.214.214.0/24

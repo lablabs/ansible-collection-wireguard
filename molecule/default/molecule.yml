@@ -2,8 +2,8 @@
 dependency:
   name: galaxy
   options:
-    ignore-certs: True
-    ignore-errors: True
+    ignore-certs: true
+    ignore-errors: true
     requirements-file: collections.yml
 driver:
   name: docker
@@ -20,6 +20,8 @@ platforms:
     pre_build_image: ${MOLECULE_PREBUILT:-true}
 provisioner:
   name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/roles
 verifier:
   name: ansible
 scenario:

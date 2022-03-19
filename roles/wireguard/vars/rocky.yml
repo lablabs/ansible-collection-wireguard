@@ -1,0 +1,8 @@
+---
+
+_distro_packages:
+  - systemd-networkd
+
+wireguard_packages:
+  - kmod-wireguard
+  - wireguard-tools
