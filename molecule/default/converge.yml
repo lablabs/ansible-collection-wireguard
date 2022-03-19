@@ -1,6 +1,11 @@
 ---
 - name: Converge
   hosts: all
+  pre_tasks:
+    - name: Install Prereqs
+      package:
+        name: iproute
+      when: ansible_os_family == 'RedHat'
   roles:
     - wireguard
   vars:
