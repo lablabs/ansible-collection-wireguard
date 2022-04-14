@@ -1,4 +1,8 @@
 ---
+
+- include_tasks: pre_check.yml
+  when: run_publickey_pre_check | bool
+
 - name: Include OS specific variables
   include_vars:
     file: "{{ lookup('first_found', possible_files) }}"

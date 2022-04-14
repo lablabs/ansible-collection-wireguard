@@ -69,3 +69,7 @@ wireguard_peers: []
 # - name: user3
 #   allowed_ip: "10.213.213.4/32"
 #   publickey: "111111111111111111"
+
+# Test Wirequard public keys and find possible errors
+# This will check the lenght of the key (44 characters) and test if it's a valid base64 string.
+run_publickey_pre_check: true
