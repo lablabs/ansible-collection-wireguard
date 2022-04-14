@@ -24,7 +24,7 @@ This collection will:
 
 ## How to run Ansible playbooks from this collection
 
-First make sure your future destination host is up and running and you have an access to SSH Private Key file.  
+First make sure your future destination host is up and running and you have an access to SSH Private Key file.
 Prepare the Python prerequisites for Ansible Roles in this Collecion:
 
 ```bash
@@ -61,81 +61,9 @@ You may want to create a playbook to run all 3 playbooks in one run:
   tags: wireguard
 ```
 
-## Variables example
+## Variables
 
-```yaml
----
-# Directory to store WireGuard configuration on the remote hosts
-wireguard_dir: /etc/wireguard
-wireguard_clients_dir: "{{ wireguard_dir }}/clients"
-
-wireguard_clients_download_dir: clients/
-wireguard_download_clients: false
-
-# Predefined wireguard keys, this usually should be defined in ansible-vault
-wireguard_privatekey_path: "{{ wireguard_dir }}/privatekey"
-wireguard_publickey_path: "{{ wireguard_dir }}/publickey"
-wireguard_presharedkey_path: "{{ wireguard_dir }}/presharedkey"
-
-wireguard_systemd_path: /etc/systemd/network
-
-# Wireguard packages
-wireguard_repo_url: "{{ _repo_url }}"
-wireguard_distro_packages: "{{ _distro_packages }}"
-
-wireguard_packages:
-  - wireguard-dkms
-  - wireguard-tools
-
-# The default port WireGuard will listen if not specified otherwise.
-wireguard_port: 51820
-
-# Client destination Hostname
-wireguard_hostname: "{{ inventory_hostname }}"
-
-# The default interface name that wireguard should use if not specified otherwise.
-wireguard_interface: wg0
-
-# Base wireguard subnet
-wireguard_address: 10.213.213.0/24
-
-wireguard_server_ip: "{{ wireguard_address | ipaddr('network') | ipmath(1) }}"
-wireguard_subnetmask: "{{ wireguard_address | ipaddr('prefix') }}"
-
-# XXX: This role only works with PrivateKeyFile/PresharedKeyFile it doesn't support variables.
-wireguard_systemd_netdev:
-  - NetDev:
-      - Name: "{{ wireguard_interface }}"
-      - Kind: wireguard
-      - Description: "wireguard server: {{ wireguard_interface}} server on {{ wireguard_address }}"
-  - WireGuard:
-      - PrivateKey: "{{ _privkey_value['content'] | b64decode }}"
-      - ListenPort: "{{ wireguard_port }}"
-
-wireguard_systemd_network:
-  - Match:
-      - Name: "{{ wireguard_interface }}"
-  - Network:
-      - Address: "{{ wireguard_server_ip }}/{{ wireguard_subnetmask }}"
-  - Route:
-      - Destination: "{{ wireguard_address }}"
-      - Gateway: "{{ wireguard_server_ip }}"
-
-wireguard_keepalive: 25
-
-wireguard_peers_allowed_ips: "{{ ([(_wireguard_interface_addr | ipaddr('network/prefix'))] + wireguard_additional_routes) | join(\", \") }}"
-wireguard_peers: []
-  # - name: user1
-  #   allowed_ip: "10.213.213.2/32"
-  #   publickey: "asdasdasdadsasdasd"
-  # - name: user2
-  #   allowed_ip: "10.213.213.3/32"
-  #   publickey: "000000000000000000"
-  #   keepalive: 30
-  # - name: user3
-  #   allowed_ip: "10.213.213.4/32"
-  #   publickey: "111111111111111111"
-```
+[Wireguard Role Variables](roles/wireguard/defaults/main.yml)
 
 ## License
 
