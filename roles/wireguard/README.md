@@ -72,18 +72,26 @@ wireguard_systemd_network:
 
 wireguard_keepalive: 25
 
+# Additional IPs allowed to Wireguard
+# (Following list of IPs will be added to Wireguard AllowedIPs)
+wireguard_additional_routes: {}
+
 wireguard_peers_allowed_ips: "{{ ([(_wireguard_interface_addr | ipaddr('network/prefix'))] + wireguard_additional_routes) | join(\", \") }}"
 wireguard_peers: []
-  # - name: user1
-  #   allowed_ip: "10.213.213.2/32"
-  #   publickey: "asdasdasdadsasdasd"
-  # - name: user2
-  #   allowed_ip: "10.213.213.3/32"
-  #   publickey: "000000000000000000"
-  #   keepalive: 30
-  # - name: user3
-  #   allowed_ip: "10.213.213.4/32"
-  #   publickey: "111111111111111111"
+# - name: user1
+#   allowed_ip: "10.213.213.2/32"
+#   publickey: "asdasdasdadsasdasd"
+# - name: user2
+#   allowed_ip: "10.213.213.3/32"
+#   publickey: "000000000000000000"
+#   keepalive: 30
+# - name: user3
+#   allowed_ip: "10.213.213.4/32"
+#   publickey: "111111111111111111"
+
+# Test Wirequard public keys and find possible errors
+# This will check the lenght of the key (44 characters) and test if it's a valid base64 string.
+run_publickey_pre_check: true
 
 ```
 

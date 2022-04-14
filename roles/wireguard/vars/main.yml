@@ -5,4 +5,4 @@ _system_arch_map:
 
 _system_arch: "{{ _arch_map[ansible_architecture] | default(ansible_architecture) }}"
 
-_wireguard_interface_addr: "{{ ansible_default_ipv4.address }}/{{ ansible_default_ipv4.netmask }}"
+_wireguard_interface_addr: "{{ ansible_default_ipv4.address | default(ansible_all_ipv4_addresses[0]) }}/{{ ansible_default_ipv4.netmask }}"

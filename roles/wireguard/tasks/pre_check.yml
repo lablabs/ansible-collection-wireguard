@@ -1,0 +1,15 @@
+---
+
+- name: Check if Public Key is valid base64 string
+  assert:
+    that:
+      - " item.publickey | b64decode "
+    fail_msg: "The Public Key for user {{ item.name }} is invalid."
+  with_items: "{{ wireguard_peers }}"
+
+- name: Check if Public Key is valid base64 string
+  assert:
+    that:
+      - " item.publickey | length == 44 "
+    fail_msg: "The Lenght of Public Key for user {{ item.name }} is invalid."
+  with_items: "{{ wireguard_peers }}"

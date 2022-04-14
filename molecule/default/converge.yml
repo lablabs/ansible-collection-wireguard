@@ -26,11 +26,11 @@
     wireguard_peers:
       - name: user1
         allowed_ip: "10.213.213.2"
-        publickey: "asdasdasdadsasdasd"
+        publickey: "YXNhc21hc2Fhc3Npc2FzYXNhc2FzYXNhc2FzYXNhc3N=" # Fake Pub Key
       - name: user2
         allowed_ip: "10.213.213.3"
-        publickey: "000000000000000000"
+        publickey: "YXNhc21hc2Fhc3Npc2FzYXNhc2FzYXNhc2FzYXNhc3N=" # Fake Pub Key
         keepalive: 30
       - name: user3
         allowed_ip: "10.213.213.4"
-        publickey: "111111111111111111"
+        publickey: "YXNhc21hc2Fhc3Npc2FzYXNhc2FzYXNhc2FzYXNhc3N=" # Fake Pub Key
