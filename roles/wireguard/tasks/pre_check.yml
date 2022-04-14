@@ -13,9 +13,3 @@
       - " item.publickey | length == 44 "
     fail_msg: "The Lenght of Public Key for user {{ item.name }} is invalid."
   with_items: "{{ wireguard_peers }}"
-
-# - name: Fail when Public Key string lenght is not 44 characters long
-#   fail:
-#     msg: "The Public Key for user {{ item.name }} is invalid."
-#   when: item.publickey | length != 44
-#   with_items: "{{ wireguard_peers }}"
