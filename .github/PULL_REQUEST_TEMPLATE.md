@@ -18,4 +18,4 @@ Please describe the tests that you ran to verify your changes.
 
 ## Destination branch
 
-Create a PR into `develop` branch
+Create a PR into `main` branch
