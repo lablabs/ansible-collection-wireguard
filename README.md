@@ -1,6 +1,6 @@
 # Wireguard Server Ansible Collection
 
-[![Molecule test](https://github.com/lablabs/ansible-collection-wireguard/actions/workflows/molecule.yaml/badge.svg?event=schedule)](https://github.com/lablabs/ansible-collection-wireguard/actions/workflows/molecule.yaml)
+[![Molecule test](https://github.com/lablabs/ansible-collection-wireguard/actions/workflows/molecule.yaml/badge.svg)](https://github.com/lablabs/ansible-collection-wireguard/actions/workflows/molecule.yaml)
 
 [<img src="ll-logo.png">](https://lablabs.io/)
 
@@ -17,6 +17,7 @@ This collection will:
 
 - Rocky Linux 8
 - Ubuntu 20.04 LTS
+- Ubuntu 22.04 LTS
 
 ### Eventually supported but not tested
 
