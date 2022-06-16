@@ -14,6 +14,7 @@ This is a copy of `defaults/main.yml`.
 
 ```yaml
 ---
+---
 # Directory to store WireGuard configuration on the remote hosts
 wireguard_dir: /etc/wireguard
 wireguard_clients_dir: "{{ wireguard_dir }}/clients"
@@ -50,8 +51,9 @@ wireguard_address: 10.213.213.0/24
 
 wireguard_server_ip: "{{ wireguard_address | ipaddr('network') | ipmath(1) }}"
 wireguard_subnetmask: "{{ wireguard_address | ipaddr('prefix') }}"
+wireguard_peers_allowed_ips: "{{ ([(_wireguard_interface_addr | ipaddr('network/prefix'))] + (wireguard_additional_routes|default([]))) | join(\", \") }}"
 
-# XXX: This role only works with PrivateKeyFile/PresharedKeyFile it doesn't support variables.
+# This role works only with PrivateKeyFile/PresharedKeyFile.
 wireguard_systemd_netdev:
   - NetDev:
       - Name: "{{ wireguard_interface }}"
@@ -74,9 +76,8 @@ wireguard_keepalive: 25
 
 # Additional IPs allowed to Wireguard
 # (Following list of IPs will be added to Wireguard AllowedIPs)
-wireguard_additional_routes: {}
+wireguard_additional_routes: []
 
-wireguard_peers_allowed_ips: "{{ ([(_wireguard_interface_addr | ipaddr('network/prefix'))] + wireguard_additional_routes) | join(\", \") }}"
 wireguard_peers: []
 # - name: user1
 #   allowed_ip: "10.213.213.2/32"
