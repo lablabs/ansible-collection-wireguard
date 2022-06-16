@@ -11,4 +11,3 @@ PresharedKey = {{ preshared_key }}
 AllowedIPs = {{ wireguard_peers_allowed_ips }}
 Endpoint = {{ wireguard_hostname }}:{{ wireguard_port }}
 PersistentKeepalive = {{ (item.WireGuardPeer | json_query('[?"PersistentKeepalive"].PersistentKeepalive') | first) | default(wireguard_keepalive) }}
-
