@@ -5,7 +5,7 @@
 {% for peer in wireguard_peers %}
 - WireGuardPeer:
   - FriendlyName: {{ peer.name }}
-  - AllowedIPs: {{ peer.allowed_ip }}/32
+  - AllowedIPs: {{ peer.allowed_ip }}
   - PublicKey: "{{ peer.publickey }}"
   - PresharedKey: "{{ _pskkey_value['content'] | b64decode }}"
   - PersistentKeepalive: {{ peer.keepalive | default(wireguard_keepalive) }}
