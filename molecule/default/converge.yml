@@ -28,9 +28,9 @@
         allowed_ip: "10.213.213.2"
         publickey: "YXNhc21hc2Fhc3Npc2FzYXNhc2FzYXNhc2FzYXNhc3N=" # Fake Pub Key
       - name: user2
-        allowed_ip: "10.213.213.3"
+        allowed_ip: "10.213.213.3/32"
         publickey: "YXNhc21hc2Fhc3Npc2FzYXNhc2FzYXNhc2FzYXNhc3N=" # Fake Pub Key
         keepalive: 30
       - name: user3
-        allowed_ip: "10.213.213.4"
+        allowed_ip: "10.213.213.50/30"
         publickey: "YXNhc21hc2Fhc3Npc2FzYXNhc2FzYXNhc2FzYXNhc3N=" # Fake Pub Key
