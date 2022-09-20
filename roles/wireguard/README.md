@@ -116,11 +116,11 @@ It will also download the client configs into the specified directory. Remaining
         allowed_ip: "10.213.213.2"
         publickey: "asdasdasdadsasdasd"
       - name: user2
-        allowed_ip: "10.213.213.3"
+        allowed_ip: "10.213.213.3/32"
         publickey: "000000000000000000"
         keepalive: 30
       - name: user3
-        allowed_ip: "10.213.213.4"
+        allowed_ip: "10.213.213.4/30"
         publickey: "111111111111111111"
 
   tasks:
