@@ -1,7 +1,7 @@
 ---
 namespace: lablabs
 name: wireguard
-version: 0.1.1
+version: 0.2.4
 readme: README.md
 authors:
   - Labyrinth Labs <info@lablabs.io>
@@ -15,4 +15,3 @@ repository: https://github.com/lablabs/ansible-collection-wireguard
 documentation: https://github.com/lablabs/ansible-collection-wireguard
 homepage: https://www.lablabs.io
 issues: https://github.com/lablabs/ansible-collection-wireguard/issues
-build_ignore:
