@@ -45,7 +45,7 @@
   ansible.builtin.set_fact:
     peers: "{{ lookup('template', 'templates/peers.j2') | from_yaml }}"
 
-- name: copy .netdev profiles
+- name: Copy .netdev profiles
   ansible.builtin.template:
     src: "systemd-networkd.conf.j2"
     dest: "{{ wireguard_systemd_path }}/{{ wireguard_interface }}.netdev"
@@ -53,10 +53,10 @@
   vars:
     systemd_config: "{{ wireguard_systemd_netdev + (peers | list) }}"
   notify:
-    - reload systemd
-    - restart systemd-networkd
+    - Reload systemd
+    - Restart systemd-networkd
 
-- name: copy .network profiles
+- name: Copy .network profiles
   ansible.builtin.template:
     src: "systemd-networkd.conf.j2"
     dest: "{{ wireguard_systemd_path }}/{{ wireguard_interface }}.network"
@@ -64,5 +64,5 @@
   vars:
     systemd_config: "{{ wireguard_systemd_network }}"
   notify:
-    - reload systemd
-    - restart systemd-networkd
+    - Reload systemd
+    - Restart systemd-networkd

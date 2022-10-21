@@ -1,10 +1,10 @@
 ---
 
-- name: reload systemd
+- name: Reload systemd
   ansible.builtin.systemd:
     daemon_reload: true
 
-- name: restart systemd-networkd
+- name: Restart systemd-networkd
   ansible.builtin.service:
     name: systemd-networkd
     state: restarted

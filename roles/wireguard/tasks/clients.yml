@@ -27,7 +27,7 @@
     preshared_key: "{{ _pskkey_value['content'] | b64decode }}"
   loop: "{{ peers | list }}"
   notify:
-    - restart systemd-networkd
+    - Restart systemd-networkd
 
 - name: Download client configs
   ansible.builtin.fetch:

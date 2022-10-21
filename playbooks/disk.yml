@@ -11,13 +11,13 @@
       number: 1
       state: present
       fs_type: ext4
-    when: ( configure_data_disk | default(false) )
+    when: (configure_data_disk | default(false))
 
   - name: Create a ext4 filesystem on additional disk
     community.general.filesystem:
       fstype: ext4
       dev: "{{ data_disk_partition | default('/dev/nvme1n1p1') }}"
-    when: ( configure_data_disk | default(false) )
+    when: (configure_data_disk | default(false))
 
   - name: Mount additional disk
     ansible.posix.mount:
@@ -25,4 +25,4 @@
       src: "{{ data_disk_partition | default('/dev/nvme1n1p1') }}"
       fstype: ext4
       state: mounted
-    when: ( configure_data_disk | default(false) )
+    when: (configure_data_disk | default(false))

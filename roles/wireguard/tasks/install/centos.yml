@@ -3,6 +3,7 @@
   ansible.builtin.get_url:
     url: "{{ wireguard_repo_url }}"
     dest: /etc/yum.repos.d/wireguard.repo
+    mode: '0644'
 
 - name: Install EPEL repository
   ansible.builtin.yum:

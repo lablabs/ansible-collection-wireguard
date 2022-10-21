@@ -35,14 +35,14 @@ wireguard_address: 10.213.213.0/24
 
 wireguard_server_ip: "{{ wireguard_address | ipaddr('network') | ipmath(1) }}"
 wireguard_subnetmask: "{{ wireguard_address | ipaddr('prefix') }}"
-wireguard_peers_allowed_ips: "{{ ([(_wireguard_interface_addr | ipaddr('network/prefix'))] + (wireguard_additional_routes|default([]))) | join(\", \") }}"
+wireguard_peers_allowed_ips: "{{ ([(_wireguard_interface_addr | ipaddr('network/prefix'))] + (wireguard_additional_routes | default([]))) | join(\", \") }}"
 
 # This role works only with PrivateKeyFile/PresharedKeyFile.
 wireguard_systemd_netdev:
   - NetDev:
       - Name: "{{ wireguard_interface }}"
       - Kind: wireguard
-      - Description: "wireguard server: {{ wireguard_interface}} server on {{ wireguard_address }}"
+      - Description: "wireguard server: {{ wireguard_interface }} server on {{ wireguard_address }}"
   - WireGuard:
       - PrivateKey: "{{ _privkey_value['content'] | b64decode }}"
       - ListenPort: "{{ wireguard_port }}"
