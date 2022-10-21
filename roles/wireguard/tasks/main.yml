@@ -1,20 +1,20 @@
 ---
 
-- include_tasks: pre_check.yml
+- ansible.builtin.include_tasks: pre_check.yml
   when: run_publickey_pre_check | bool
 
 - name: Include OS specific variables
-  include_vars:
+  ansible.builtin.include_vars:
     file: "{{ lookup('first_found', possible_files) }}"
   vars:
     possible_files:
       - "vars/{{ ansible_distribution | lower }}-{{ ansible_distribution_version }}.yml"
       - "vars/{{ ansible_distribution | lower }}.yml"
 
-- include_tasks: "install/{{ ansible_distribution | lower }}.yml"
+- ansible.builtin.include_tasks: "install/{{ ansible_distribution | lower }}.yml"
 
 - name: Create required dirs
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     owner: root
     group: systemd-network
@@ -25,14 +25,14 @@
     - "{{ wireguard_clients_dir }}"
 
 - name: Install WireGuard
-  package:
+  ansible.builtin.package:
     name: "{{ wireguard_packages }}"
     state: present
   tags:
     - wg-install
 
 - name: Enable WireGuard kernel module
-  modprobe:
+  community.general.modprobe:
     name: wireguard
     state: present
   register: wireguard_module_enabled
@@ -44,12 +44,12 @@
     - wg-install
     - molecule-notest
 
-- include_tasks: server.yml
+- ansible.builtin.include_tasks: server.yml
 
-- include_tasks: clients.yml
+- ansible.builtin.include_tasks: clients.yml
 
 - name: Cleanup secrets from memory
-  set_fact:
+  ansible.builtin.set_fact:
     _pskkey_value: ""
     _pubkey_value: ""
     _privkey_value: ""

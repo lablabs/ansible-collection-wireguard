@@ -1,16 +1,16 @@
 ---
 - name: Add WireGuard repository
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ wireguard_repo_url }}"
     dest: /etc/yum.repos.d/wireguard.repo
 
 - name: Install EPEL repository
-  yum:
+  ansible.builtin.yum:
     name: epel-release
     update_cache: true
 
 - name: Install required packages
-  yum:
+  ansible.builtin.yum:
     name: "{{ wireguard_distro_packages }}"
     state: present
   tags:

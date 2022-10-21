@@ -9,7 +9,7 @@
 
   post_tasks:
     - name: Install iptables-persistent
-      apt:
+      ansible.builtin.apt:
         name:
           - iptables
           - iptables-persistent
@@ -17,7 +17,7 @@
         update_cache: true
 
     - name: Setup MASQUERADE for server access through vpn server
-      iptables:
+      ansible.builtin.iptables:
         chain: POSTROUTING
         jump: MASQUERADE
         table: nat
@@ -30,7 +30,7 @@
         path: /etc/iptables/rules.v4
 
     - name: Setup ipv4 IP forward
-      sysctl:
+      ansible.posix.sysctl:
         name: net.ipv4.ip_forward
         value: 1
         sysctl_set: true

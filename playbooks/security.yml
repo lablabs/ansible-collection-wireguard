@@ -7,4 +7,4 @@
   roles:
     - name: devsec.hardening.ssh_hardening
     - name: devsec.hardening.os_hardening
-    - name: robertdebock.development_environment.fail2ban
+    - name: robertdebock.roles.fail2ban

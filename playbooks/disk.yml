@@ -6,7 +6,7 @@
 
   tasks:
   - name: Create ext4 partition for on Data disk
-    parted:
+    community.general.parted:
       device: "{{ data_disk | default('/dev/nvme1n1') }}"
       number: 1
       state: present
@@ -14,13 +14,13 @@
     when: ( configure_data_disk | default(false) )
 
   - name: Create a ext4 filesystem on additional disk
-    filesystem:
+    community.general.filesystem:
       fstype: ext4
       dev: "{{ data_disk_partition | default('/dev/nvme1n1p1') }}"
     when: ( configure_data_disk | default(false) )
 
   - name: Mount additional disk
-    mount:
+    ansible.posix.mount:
       path: "{{ data_disk_mount | default('/data') }}"
       src: "{{ data_disk_partition | default('/dev/nvme1n1p1') }}"
       fstype: ext4

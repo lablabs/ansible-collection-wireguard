@@ -1,16 +1,16 @@
 ---
 - name: Install EPEL repository
-  dnf:
+  ansible.builtin.dnf:
     name: epel-release
     update_cache: true
 
 - name: Install ELREPO repository
-  dnf:
+  ansible.builtin.dnf:
     name: elrepo-release
     update_cache: true
 
 - name: Install required packages
-  dnf:
+  ansible.builtin.dnf:
     name: "{{ wireguard_distro_packages }}"
     state: present
   tags:

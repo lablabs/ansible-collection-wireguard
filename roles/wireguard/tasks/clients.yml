@@ -1,18 +1,12 @@
 ---
 
-# - debug: msg="{{ item.WireGuardPeer | json_query('[?"AllowedIPs"].AllowedIPs') }}"
-#   loop: "{{ peers }}"
-
-# - debug: msg="{{ item.WireGuardPeer | json_query('[?"PublicKey"].PublicKey') }}"
-#   loop: "{{ peers }}"
-
 - name: List of defined clients
-  set_fact:
+  ansible.builtin.set_fact:
     _list_of_defined_clients: "{{ _list_of_defined_clients | default([]) + [item.publickey] }}"
   with_items: "{{ wireguard_peers }}"
 
 - name: Delete unused client configs
-  shell: |
+  ansible.builtin.shell: |
     cd "{{ wireguard_clients_dir }}"
     if [ ! -z "$(grep -L '''"{{ _list_of_defined_clients | join("\|") }}"''' *.conf)" ]; then
       rm -f $(grep -L '''"{{ _list_of_defined_clients | join("\|") }}"''' *.conf) \
@@ -24,7 +18,7 @@
   changed_when: "'deleted' in _delete_out.stdout"
 
 - name: Create clients configs
-  template:
+  ansible.builtin.template:
     src: "clients.conf.j2"
     dest: "{{ wireguard_clients_dir }}/{{ item.WireGuardPeer.0 | json_query('FriendlyName') }}.conf"
     mode: 0644
@@ -36,7 +30,7 @@
     - restart systemd-networkd
 
 - name: Download client configs
-  fetch:
+  ansible.builtin.fetch:
     src: "{{ wireguard_clients_dir }}/{{ item.name }}.conf"
     dest: "{{ wireguard_clients_download_dir }}"
     flat: true
