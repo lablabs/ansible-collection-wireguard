@@ -11,7 +11,18 @@
     umask 077 && wg genkey | tee {{ wireguard_privatekey_path }} | wg pubkey > {{ wireguard_publickey_path }}
   args:
     executable: /bin/bash
-  when: not _priv_key.stat.exists
+  when:
+    - not _priv_key.stat.exists
+    - wireguard_restore_serverkeys_dir | length == 0
+
+- name: Restore WireGuard private, public and preshared keys
+  ansible.builtin.copy:
+    src: "{{ wireguard_restore_serverkeys_dir }}"
+    dest: "{{ wireguard_dir }}"
+    mode: '0644'
+  when:
+    - not _priv_key.stat.exists
+    - wireguard_restore_serverkeys_dir | length > 0
 
 - name: Read publickey
   ansible.builtin.slurp:
@@ -66,3 +77,14 @@
   notify:
     - Reload systemd
     - Restart systemd-networkd
+
+- name: Download server private key
+  ansible.builtin.fetch:
+    src: "{{ item }}"
+    dest: "{{ wireguard_serverkeys_download_dir }}"
+    flat: true
+  loop:
+    - "{{ wireguard_privatekey_path }}"
+    - "{{ wireguard_publickey_path }}"
+    - "{{ wireguard_presharedkey_path }}"
+  when: wireguard_download_serverkeys | bool

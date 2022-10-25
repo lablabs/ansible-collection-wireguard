@@ -14,18 +14,26 @@ This is a copy of `defaults/main.yml`.
 
 ```yaml
 ---
----
 # Directory to store WireGuard configuration on the remote hosts
 wireguard_dir: /etc/wireguard
 wireguard_clients_dir: "{{ wireguard_dir }}/clients"
 
+# Download client configs
 wireguard_clients_download_dir: clients/
 wireguard_download_clients: false
 
-# Predefined wireguard keys, this usually should be defined in ansible-vault
+# Download private, public and preshared keys
+wireguard_serverkeys_download_dir: server/
+wireguard_download_serverkeys: false
+
+# Path to Wireguard keys
 wireguard_privatekey_path: "{{ wireguard_dir }}/privatekey"
 wireguard_publickey_path: "{{ wireguard_dir }}/publickey"
 wireguard_presharedkey_path: "{{ wireguard_dir }}/presharedkey"
+
+# When defined, Ansible will restore wireguard keys (private key, public key, preshared key) from this directory.
+# NOTE: The directory path must end with "/"
+wireguard_restore_serverkeys_dir: ""
 
 wireguard_systemd_path: /etc/systemd/network
 
@@ -49,16 +57,16 @@ wireguard_interface: wg0
 # Base wireguard subnet
 wireguard_address: 10.213.213.0/24
 
-wireguard_server_ip: "{{ wireguard_address | ipaddr('network') | ipmath(1) }}"
-wireguard_subnetmask: "{{ wireguard_address | ipaddr('prefix') }}"
-wireguard_peers_allowed_ips: "{{ ([(_wireguard_interface_addr | ipaddr('network/prefix'))] + (wireguard_additional_routes|default([]))) | join(\", \") }}"
+wireguard_server_ip: "{{ wireguard_address | ansible.utils.ipaddr('network') | ansible.utils.ipmath(1) }}"
+wireguard_subnetmask: "{{ wireguard_address | ansible.utils.ipaddr('prefix') }}"
+wireguard_peers_allowed_ips: "{{ ([(_wireguard_interface_addr | ansible.utils.ipaddr('network/prefix'))] + (wireguard_additional_routes | default([]))) | join(\", \") }}"
 
 # This role works only with PrivateKeyFile/PresharedKeyFile.
 wireguard_systemd_netdev:
   - NetDev:
       - Name: "{{ wireguard_interface }}"
       - Kind: wireguard
-      - Description: "wireguard server: {{ wireguard_interface}} server on {{ wireguard_address }}"
+      - Description: "wireguard server: {{ wireguard_interface }} server on {{ wireguard_address }}"
   - WireGuard:
       - PrivateKey: "{{ _privkey_value['content'] | b64decode }}"
       - ListenPort: "{{ wireguard_port }}"
@@ -93,7 +101,6 @@ wireguard_peers: []
 # Test Wirequard public keys and find possible errors
 # This will check the lenght of the key (44 characters) and test if it's a valid base64 string.
 run_publickey_pre_check: true
-
 ```
 
 ## Playbook example
