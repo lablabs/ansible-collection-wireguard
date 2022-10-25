@@ -1,6 +1,7 @@
 ---
 
-- ansible.builtin.include_tasks: pre_check.yml
+- name: Include pre-check
+  ansible.builtin.include_tasks: pre_check.yml
   when: run_publickey_pre_check | bool
 
 - name: Include OS specific variables
@@ -11,7 +12,8 @@
       - "vars/{{ ansible_distribution | lower }}-{{ ansible_distribution_version }}.yml"
       - "vars/{{ ansible_distribution | lower }}.yml"
 
-- ansible.builtin.include_tasks: "install/{{ ansible_distribution | lower }}.yml"
+- name: Include Linux distro specific tasks
+  ansible.builtin.include_tasks: "install/{{ ansible_distribution | lower }}.yml"
 
 - name: Create required dirs
   ansible.builtin.file:
@@ -44,9 +46,11 @@
     - wg-install
     - molecule-notest
 
-- ansible.builtin.include_tasks: server.yml
+- name: Include Server tasks
+  ansible.builtin.include_tasks: server.yml
 
-- ansible.builtin.include_tasks: clients.yml
+- name: Include Client tasks
+  ansible.builtin.include_tasks: clients.yml
 
 - name: Cleanup secrets from memory
   ansible.builtin.set_fact:
