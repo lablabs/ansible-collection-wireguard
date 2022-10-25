@@ -20,6 +20,9 @@ wireguard_presharedkey_path: "{{ wireguard_dir }}/presharedkey"
 # NOTE: The directory path must end with "/"
 wireguard_restore_serverkeys_dir: ""
 
+# Configure all servers with same wireguard keys.
+wireguard_same_keys: false
+
 wireguard_systemd_path: /etc/systemd/network
 
 # Wireguard packages

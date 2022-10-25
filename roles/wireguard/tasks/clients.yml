@@ -32,7 +32,8 @@
 - name: Download client configs
   ansible.builtin.fetch:
     src: "{{ wireguard_clients_dir }}/{{ item.name }}.conf"
-    dest: "{{ wireguard_clients_download_dir }}"
+    dest: "{{ wireguard_clients_download_dir }}/{{ inventory_hostname }}/"
     flat: true
+  run_once: "{{ wireguard_same_keys | bool }}"
   loop: "{{ wireguard_peers | list }}"
   when: wireguard_download_clients | bool

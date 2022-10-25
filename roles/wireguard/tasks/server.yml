@@ -1,56 +1,72 @@
 ---
 
-- name: Test if private key is already present
-  ansible.builtin.stat:
-    path: "{{ wireguard_privatekey_path }}"
-  register: _priv_key
+- block:
+  - name: Test if private key is already present
+    ansible.builtin.stat:
+      path: "{{ wireguard_privatekey_path }}"
+    register: _priv_key
 
-- name: Generate WireGuard private and public keys
-  ansible.builtin.shell: |
-    set -o pipefail
-    umask 077 && wg genkey | tee {{ wireguard_privatekey_path }} | wg pubkey > {{ wireguard_publickey_path }}
-  args:
-    executable: /bin/bash
-  when:
-    - not _priv_key.stat.exists
-    - wireguard_restore_serverkeys_dir | length == 0
+  - name: Generate WireGuard private and public keys
+    ansible.builtin.shell: |
+      set -o pipefail
+      umask 077 && wg genkey | tee {{ wireguard_privatekey_path }} | wg pubkey > {{ wireguard_publickey_path }}
+    args:
+      executable: /bin/bash
+    when:
+      - not _priv_key.stat.exists
+      - wireguard_restore_serverkeys_dir | length == 0
 
-- name: Restore WireGuard private, public and preshared keys
+  - name: Restore WireGuard private, public and preshared keys
+    ansible.builtin.copy:
+      src: "{{ wireguard_restore_serverkeys_dir }}"
+      dest: "{{ wireguard_dir }}"
+      mode: '0644'
+    when:
+      - not _priv_key.stat.exists
+      - wireguard_restore_serverkeys_dir | length > 0
+
+  - name: Read publickey
+    ansible.builtin.slurp:
+      src: "{{ wireguard_publickey_path }}"
+    register: _pubkey_value
+
+  - name: Read privatekey
+    ansible.builtin.slurp:
+      src: "{{ wireguard_privatekey_path }}"
+    register: _privkey_value
+
+  - name: Test if preshared key is already present
+    ansible.builtin.stat:
+      path: "{{ wireguard_presharedkey_path }}"
+    register: _psk_key
+
+  - name: Generate WireGuard preshared key
+    ansible.builtin.shell: |
+      set -o pipefail
+      umask 077 && wg genpsk | tee {{ wireguard_presharedkey_path }}
+    args:
+      executable: /bin/bash
+    when: not _psk_key.stat.exists
+
+  - name: Read presharedkey
+    ansible.builtin.slurp:
+      src: "{{ wireguard_presharedkey_path }}"
+    register: _pskkey_value
+  run_once: "{{ wireguard_same_keys | bool }}"
+
+- name: Distribute keys
   ansible.builtin.copy:
-    src: "{{ wireguard_restore_serverkeys_dir }}"
-    dest: "{{ wireguard_dir }}"
-    mode: '0644'
-  when:
-    - not _priv_key.stat.exists
-    - wireguard_restore_serverkeys_dir | length > 0
-
-- name: Read publickey
-  ansible.builtin.slurp:
-    src: "{{ wireguard_publickey_path }}"
-  register: _pubkey_value
-
-- name: Read privatekey
-  ansible.builtin.slurp:
-    src: "{{ wireguard_privatekey_path }}"
-  register: _privkey_value
-
-- name: Test if preshared key is already present
-  ansible.builtin.stat:
-    path: "{{ wireguard_presharedkey_path }}"
-  register: _psk_key
-
-- name: Generate WireGuard preshared key
-  ansible.builtin.shell: |
-    set -o pipefail
-    umask 077 && wg genpsk | tee {{ wireguard_presharedkey_path }}
-  args:
-    executable: /bin/bash
-  when: not _psk_key.stat.exists
-
-- name: Read presharedkey
-  ansible.builtin.slurp:
-    src: "{{ wireguard_presharedkey_path }}"
-  register: _pskkey_value
+    content: "{{ item.key }}"
+    dest: "{{ item.dest }}"
+    mode: 0600
+  loop:
+    - key: "{{ _pubkey_value.content | b64decode }}"
+      dest: "{{ wireguard_publickey_path }}"
+    - key: "{{ _privkey_value.content | b64decode }}"
+      dest: "{{ wireguard_privatekey_path }}"
+    - key: "{{ _pskkey_value.content | b64decode }}"
+      dest: "{{ wireguard_presharedkey_path }}"
+  when: "{{ wireguard_same_keys | bool }}"
 
 - name: Create peers variable from template
   ansible.builtin.set_fact:
@@ -81,10 +97,11 @@
 - name: Download server private key
   ansible.builtin.fetch:
     src: "{{ item }}"
-    dest: "{{ wireguard_serverkeys_download_dir }}"
+    dest: "{{ wireguard_serverkeys_download_dir }}/{{ inventory_hostname }}/"
     flat: true
   loop:
     - "{{ wireguard_privatekey_path }}"
     - "{{ wireguard_publickey_path }}"
     - "{{ wireguard_presharedkey_path }}"
   when: wireguard_download_serverkeys | bool
+  run_once: "{{ wireguard_same_keys | bool }}"

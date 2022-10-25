@@ -2,6 +2,8 @@
 
 This Ansible role will deploy [Wireguard](https://www.wireguard.com/) VPN tunnel and setup peers.
 
+[<img src="https://lablabs.io/static/ll-logo.png" width=350px>](https://lablabs.io/)
+
 ## Requirements
 
 Wireguard Ansible Role requires root access rights with global `become: true`.
@@ -34,6 +36,9 @@ wireguard_presharedkey_path: "{{ wireguard_dir }}/presharedkey"
 # When defined, Ansible will restore wireguard keys (private key, public key, preshared key) from this directory.
 # NOTE: The directory path must end with "/"
 wireguard_restore_serverkeys_dir: ""
+
+# Configure all servers with same wireguard keys.
+wireguard_same_keys: false
 
 wireguard_systemd_path: /etc/systemd/network
 
