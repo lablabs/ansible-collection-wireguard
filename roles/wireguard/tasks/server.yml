@@ -1,6 +1,8 @@
 ---
 
-- block:
+- name: Wireguard keys
+  run_once: "{{ wireguard_same_keys | bool }}"
+  block:
   - name: Test if private key is already present
     ansible.builtin.stat:
       path: "{{ wireguard_privatekey_path }}"
@@ -52,7 +54,6 @@
     ansible.builtin.slurp:
       src: "{{ wireguard_presharedkey_path }}"
     register: _pskkey_value
-  run_once: "{{ wireguard_same_keys | bool }}"
 
 - name: Distribute keys
   ansible.builtin.copy:
@@ -66,7 +67,8 @@
       dest: "{{ wireguard_privatekey_path }}"
     - key: "{{ _pskkey_value.content | b64decode }}"
       dest: "{{ wireguard_presharedkey_path }}"
-  when: "{{ wireguard_same_keys | bool }}"
+  # when: "{{ wireguard_same_keys | bool }}"
+  when: wireguard_same_keys | bool
 
 - name: Create peers variable from template
   ansible.builtin.set_fact:
