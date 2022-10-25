@@ -2,7 +2,7 @@
 
 [![Molecule test](https://github.com/lablabs/ansible-collection-wireguard/actions/workflows/molecule.yaml/badge.svg)](https://github.com/lablabs/ansible-collection-wireguard/actions/workflows/molecule.yaml)
 
-[<img src="ll-logo.png">](https://lablabs.io/)
+[<img src="https://lablabs.io/static/ll-logo.png" width=350px>](https://lablabs.io/)
 
 Wireguard VPN Server Ansible Collection.
 
@@ -62,9 +62,9 @@ You may want to create a playbook to run all 3 playbooks in one run:
   tags: wireguard
 ```
 
-## Variables
+## Ansible Roles in this collection
 
-[Wireguard Role Variables](roles/wireguard/defaults/main.yml)
+[Wireguard README](roles/wireguard/README.md)
 
 ## License
 
