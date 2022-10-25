@@ -20,6 +20,7 @@
     wireguard_address: 10.214.214.0/24
     wireguard_download_clients: true
     wireguard_download_serverkeys: true
+    wireguard_same_keys: true
     wireguard_additional_routes:
       - 172.11.0.0/16
       - 172.22.0.0/20
