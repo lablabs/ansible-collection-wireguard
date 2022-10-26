@@ -8,7 +8,7 @@ dependency:
 driver:
   name: docker
 lint: |
-  yamllint -s .
+  yamllint .
   ansible-lint --exclude molecule/ --exclude playbooks/
 platforms:
   - name: instance1
@@ -39,7 +39,7 @@ scenario:
     - dependency
     - create
     - prepare
-    - lint
+    # - lint
     - converge
     - idempotence
     - verify
