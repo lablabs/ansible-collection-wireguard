@@ -39,7 +39,7 @@ scenario:
     - dependency
     - create
     - prepare
-    # - lint
+    - lint
     - converge
     - idempotence
     - verify
