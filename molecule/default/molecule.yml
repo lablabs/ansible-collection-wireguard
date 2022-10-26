@@ -7,9 +7,6 @@ dependency:
     requirements-file: collections.yml
 driver:
   name: docker
-lint: |
-  yamllint .
-  ansible-lint --exclude molecule/ --exclude playbooks/
 platforms:
   - name: instance1
     image: "geerlingguy/docker-${image:-ubuntu2004}-ansible:${tag:-latest}"
