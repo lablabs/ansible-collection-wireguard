@@ -1,6 +1,6 @@
 ---
 - name: Add WireGuard repository
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "{{ wireguard_repo_url }}"
     state: present
   when: wireguard_repo_url
@@ -8,7 +8,7 @@
     - wg-install
 
 - name: Install required packages
-  apt:
+  ansible.builtin.apt:
     name: "{{ wireguard_distro_packages }}"
     update_cache: true
     state: present

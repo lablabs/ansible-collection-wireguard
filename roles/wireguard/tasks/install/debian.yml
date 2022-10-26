@@ -1,6 +1,6 @@
 ---
 - name: Add WireGuard repository on buster or earlier
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb http://deb.debian.org/debian buster-backports main"
     state: present
     update_cache: true
@@ -9,7 +9,7 @@
     - wg-install
 
 - name: Install GPG - required to add wireguard key
-  apt:
+  ansible.builtin.apt:
     name: "{{ wireguard_distro_packages }}"
     update_cache: true
     state: present

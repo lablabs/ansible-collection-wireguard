@@ -7,11 +7,15 @@ dependency:
     requirements-file: collections.yml
 driver:
   name: docker
-lint: |
-  yamllint -s .
-  ansible-lint --exclude molecule/ --exclude playbooks/
 platforms:
-  - name: instance
+  - name: instance1
+    image: "geerlingguy/docker-${image:-ubuntu2004}-ansible:${tag:-latest}"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: ${MOLECULE_PREBUILT:-true}
+  - name: instance2
     image: "geerlingguy/docker-${image:-ubuntu2004}-ansible:${tag:-latest}"
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:

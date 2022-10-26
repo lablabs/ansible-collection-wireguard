@@ -1,68 +1,109 @@
 ---
 
-- name: Test if private key is already present
-  stat:
-    path: "{{ wireguard_privatekey_path }}"
-  register: _priv_key
+- name: Wireguard keys
+  run_once: "{{ wireguard_same_keys | bool }}"
+  block:
+  - name: Test if private key is already present
+    ansible.builtin.stat:
+      path: "{{ wireguard_privatekey_path }}"
+    register: _priv_key
 
-- name: Generate WireGuard private and public keys
-  shell: |
-    set -o pipefail
-    umask 077 && wg genkey | tee {{ wireguard_privatekey_path }} | wg pubkey > {{ wireguard_publickey_path }}
-  args:
-    executable: /bin/bash
-  when: not _priv_key.stat.exists
+  - name: Generate WireGuard private and public keys
+    ansible.builtin.shell: |
+      set -o pipefail
+      umask 077 && wg genkey | tee {{ wireguard_privatekey_path }} | wg pubkey > {{ wireguard_publickey_path }}
+    args:
+      executable: /bin/bash
+    when:
+      - not _priv_key.stat.exists
+      - wireguard_restore_serverkeys_dir | length == 0
 
-- name: Read publickey
-  slurp:
-    src: "{{ wireguard_publickey_path }}"
-  register: _pubkey_value
+  - name: Restore WireGuard private, public and preshared keys
+    ansible.builtin.copy:
+      src: "{{ wireguard_restore_serverkeys_dir }}"
+      dest: "{{ wireguard_dir }}"
+      mode: '0644'
+    when:
+      - not _priv_key.stat.exists
+      - wireguard_restore_serverkeys_dir | length > 0
 
-- name: Read privatekey
-  slurp:
-    src: "{{ wireguard_privatekey_path }}"
-  register: _privkey_value
+  - name: Read publickey
+    ansible.builtin.slurp:
+      src: "{{ wireguard_publickey_path }}"
+    register: _pubkey_value
 
-- name: Test if preshared key is already present
-  stat:
-    path: "{{ wireguard_presharedkey_path }}"
-  register: _psk_key
+  - name: Read privatekey
+    ansible.builtin.slurp:
+      src: "{{ wireguard_privatekey_path }}"
+    register: _privkey_value
 
-- name: Generate WireGuard preshared key
-  shell: |
-    set -o pipefail
-    umask 077 && wg genpsk | tee {{ wireguard_presharedkey_path }}
-  args:
-    executable: /bin/bash
-  when: not _psk_key.stat.exists
+  - name: Test if preshared key is already present
+    ansible.builtin.stat:
+      path: "{{ wireguard_presharedkey_path }}"
+    register: _psk_key
 
-- name: Read presharedkey
-  slurp:
-    src: "{{ wireguard_presharedkey_path }}"
-  register: _pskkey_value
+  - name: Generate WireGuard preshared key
+    ansible.builtin.shell: |
+      set -o pipefail
+      umask 077 && wg genpsk | tee {{ wireguard_presharedkey_path }}
+    args:
+      executable: /bin/bash
+    when: not _psk_key.stat.exists
+
+  - name: Read presharedkey
+    ansible.builtin.slurp:
+      src: "{{ wireguard_presharedkey_path }}"
+    register: _pskkey_value
+
+- name: Distribute keys
+  ansible.builtin.copy:
+    content: "{{ item.key }}"
+    dest: "{{ item.dest }}"
+    mode: 0600
+  loop:
+    - key: "{{ _pubkey_value.content | b64decode }}"
+      dest: "{{ wireguard_publickey_path }}"
+    - key: "{{ _privkey_value.content | b64decode }}"
+      dest: "{{ wireguard_privatekey_path }}"
+    - key: "{{ _pskkey_value.content | b64decode }}"
+      dest: "{{ wireguard_presharedkey_path }}"
+  # when: "{{ wireguard_same_keys | bool }}"
+  when: wireguard_same_keys | bool
 
 - name: Create peers variable from template
-  set_fact:
+  ansible.builtin.set_fact:
     peers: "{{ lookup('template', 'templates/peers.j2') | from_yaml }}"
 
-- name: copy .netdev profiles
-  template:
+- name: Copy .netdev profiles
+  ansible.builtin.template:
     src: "systemd-networkd.conf.j2"
     dest: "{{ wireguard_systemd_path }}/{{ wireguard_interface }}.netdev"
     mode: 0644
   vars:
     systemd_config: "{{ wireguard_systemd_netdev + (peers | list) }}"
   notify:
-    - reload systemd
-    - restart systemd-networkd
+    - Reload systemd
+    - Restart systemd-networkd
 
-- name: copy .network profiles
-  template:
+- name: Copy .network profiles
+  ansible.builtin.template:
     src: "systemd-networkd.conf.j2"
     dest: "{{ wireguard_systemd_path }}/{{ wireguard_interface }}.network"
     mode: 0644
   vars:
     systemd_config: "{{ wireguard_systemd_network }}"
   notify:
-    - reload systemd
-    - restart systemd-networkd
+    - Reload systemd
+    - Restart systemd-networkd
+
+- name: Download server private key
+  ansible.builtin.fetch:
+    src: "{{ item }}"
+    dest: "{{ wireguard_serverkeys_download_dir }}/{{ inventory_hostname }}/"
+    flat: true
+  loop:
+    - "{{ wireguard_privatekey_path }}"
+    - "{{ wireguard_publickey_path }}"
+    - "{{ wireguard_presharedkey_path }}"
+  when: wireguard_download_serverkeys | bool
+  run_once: "{{ wireguard_same_keys | bool }}"

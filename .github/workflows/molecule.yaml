@@ -30,19 +30,23 @@ jobs:
           - image: "ubuntu2204"
             tag: "latest"
     steps:
+      - name: Fix Git safe directories issue when in containers
+        # cf: https://github.com/actions/checkout/issues/760
+        run: git config --global --add safe.directory /__w/ansible-collection-wireguard/ansible-collection-wireguard
+
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: "${{ github.repository }}"
 
       - name: Molecule for Ansible
-        uses: robertdebock/molecule-action@4.0.7
+        uses: robertdebock/molecule-action@4.0.9
         with:
           image: ${{ matrix.config.image }}
           tag: ${{ matrix.config.tag }}
 
       - name: Upload configs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: client-configs
           path: clients/
