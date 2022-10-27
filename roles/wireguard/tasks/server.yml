@@ -60,6 +60,7 @@
     content: "{{ item.key }}"
     dest: "{{ item.dest }}"
     mode: 0600
+  no_log: true
   loop:
     - key: "{{ _pubkey_value.content | b64decode }}"
       dest: "{{ wireguard_publickey_path }}"
