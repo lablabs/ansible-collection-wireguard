@@ -9,7 +9,7 @@
 
   post_tasks:
     - name: Install iptables-persistent
-      ansible.builtin.apt:
+      ansible.builtin.package:
         name:
           - iptables
           - iptables-persistent
