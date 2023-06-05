@@ -14,7 +14,6 @@
           - iptables
           - iptables-persistent
         state: present
-        update_cache: true
 
     - name: Setup MASQUERADE for server access through vpn server
       ansible.builtin.iptables:
