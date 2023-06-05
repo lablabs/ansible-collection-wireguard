@@ -1,7 +1,7 @@
 ---
 namespace: lablabs
 name: wireguard
-version: "0.3.1"
+version: "0.3.2"
 readme: README.md
 authors:
   - Labyrinth Labs <info@lablabs.io>
@@ -9,8 +9,8 @@ description: Wireguard Server Ansible Collection.
 license_file: LICENSE
 tags: [wireguard, vpn, system, linux, security, networking]
 dependencies:
-  devsec.hardening: "7.12.0"
-  robertdebock.roles: "1.9.7"
+  devsec.hardening: "8.7.0"
+  robertdebock.roles: "1.10.6"
 repository: https://github.com/lablabs/ansible-collection-wireguard
 documentation: https://github.com/lablabs/ansible-collection-wireguard
 homepage: https://www.lablabs.io
