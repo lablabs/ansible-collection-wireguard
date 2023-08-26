@@ -19,7 +19,7 @@
         name:
           - iptables-persistent
         state: present
-      when: 
+      when:
         - ansible_os_family == "Debian"
 
     - name: Install iptables-persistent for Redhat family
@@ -27,9 +27,9 @@
         name:
           - iptables-services
         state: present
-      when: 
+      when:
         - ansible_os_family == "RedHat"
-        
+
     - name: Setup MASQUERADE for server access through vpn server
       ansible.builtin.iptables:
         chain: POSTROUTING
