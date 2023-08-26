@@ -123,6 +123,7 @@ It will also download the client configs into the specified directory. Remaining
   vars:
     wireguard_clients_download_dir: /my_clients/
     wireguard_download_clients: true
+    wireguard_out_interface: ens5
     wireguard_peers:
       - name: user1
         allowed_ip: "10.213.213.2"
