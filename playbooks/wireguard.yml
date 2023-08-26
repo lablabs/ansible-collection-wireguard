@@ -8,14 +8,28 @@
     - name: wireguard
 
   post_tasks:
-    - name: Install iptables-persistent
-      ansible.builtin.apt:
+    - name: Install iptables
+      ansible.builtin.package:
         name:
           - iptables
+        state: present
+
+    - name: Install iptables-persistent for Debian family
+      ansible.builtin.package:
+        name:
           - iptables-persistent
         state: present
-        update_cache: true
+      when: 
+        - ansible_os_family == "Debian"
 
+    - name: Install iptables-persistent for Redhat family
+      ansible.builtin.package:
+        name:
+          - iptables-services
+        state: present
+      when: 
+        - ansible_os_family == "RedHat"
+        
     - name: Setup MASQUERADE for server access through vpn server
       ansible.builtin.iptables:
         chain: POSTROUTING
