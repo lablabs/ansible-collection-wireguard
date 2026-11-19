@@ -1,10 +1,51 @@
 ---
-# This is an example playbook to execute Ansible tests.
-
 - name: Verify
   hosts: all
   gather_facts: false
+  vars:
+    clients_dir: /data/wireguard/clients
   tasks:
-  - name: Example assertion
-    assert:
-      that: true
+    - name: Read rendered client configs
+      ansible.builtin.slurp:
+        src: "{{ clients_dir }}/{{ item }}.conf"
+      loop: [user1, user2, user3]
+      register: _slurped
+
+    # Split every config on [Peer]: first part is [Interface], last part is [Peer]
+    - name: Split client configs into sections
+      ansible.builtin.set_fact:
+        _names: "{{ _slurped.results | map(attribute='item') | list }}"
+        _texts: "{{ _slurped.results | map(attribute='content') | map('b64decode') | list }}"
+
+    - name: Build per-user section lookup
+      ansible.builtin.set_fact:
+        _iface: "{{ dict(_names | zip(_texts | map('split', '[Peer]') | map('first'))) }}"
+        _peer: "{{ dict(_names | zip(_texts | map('split', '[Peer]') | map('last'))) }}"
+
+    - name: user1 gets global options
+      ansible.builtin.assert:
+        that:
+          - _iface.user1 is search('^MTU = 1380$', multiline=True)
+          - _iface.user1 is search('^DNS = 1[.]1[.]1[.]1, 8[.]8[.]8[.]8$', multiline=True)
+          - _peer.user1 is search('^PersistentKeepalive = 25$', multiline=True)
+
+    - name: user2 overrides DNS, keeps global MTU and legacy keepalive
+      ansible.builtin.assert:
+        that:
+          - _iface.user2 is search('^MTU = 1380$', multiline=True)
+          - _iface.user2 is search('^DNS = 10[.]0[.]0[.]53$', multiline=True)
+          - _iface.user2 is not search('8[.]8[.]8[.]8')
+          - _peer.user2 is search('^PersistentKeepalive = 30$', multiline=True)
+
+    - name: user3 drops MTU (null) and overrides keepalive
+      ansible.builtin.assert:
+        that:
+          - _iface.user3 is not search('^MTU', multiline=True)
+          - _iface.user3 is search('^DNS = 1[.]1[.]1[.]1, 8[.]8[.]8[.]8$', multiline=True)
+          - _peer.user3 is search('^PersistentKeepalive = 10$', multiline=True)
+
+    - name: Interface options never leak into the [Peer] section
+      ansible.builtin.assert:
+        that:
+          - _peer[item] is not search('^(MTU|DNS) ', multiline=True)
+      loop: [user1, user2, user3]

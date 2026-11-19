@@ -13,3 +13,13 @@
       - " item.publickey | length == 44 "
     fail_msg: "The Lenght of Public Key for user {{ item.name }} is invalid."
   with_items: "{{ wireguard_peers }}"
+
+- name: Check client options are dictionaries
+  ansible.builtin.assert:
+    that:
+      - wireguard_client_interface_options is mapping
+      - wireguard_client_peer_options is mapping
+      - item.client_interface_options | default({}) is mapping
+      - item.client_peer_options | default({}) is mapping
+    fail_msg: "client_interface_options / client_peer_options must be dictionaries (peer {{ item.name }})."
+  with_items: "{{ wireguard_peers }}"
