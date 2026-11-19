@@ -1,0 +1,107 @@
+---
+argument_specs:
+  main:
+    short_description: Install and configure a WireGuard server with systemd-networkd and generate client configs.
+    description:
+      - Installs WireGuard, generates server keys, configures the server through systemd-networkd and renders client configs for every peer.
+    options:
+      wireguard_dir:
+        type: path
+        default: /etc/wireguard
+        description: Directory where WireGuard configuration is stored on the remote host.
+      wireguard_clients_dir:
+        type: path
+        description: Directory where client configs are generated. Defaults to C(wireguard_dir)/clients.
+      wireguard_download_clients:
+        type: bool
+        default: false
+        description: Download generated client configs to the controller.
+      wireguard_clients_download_dir:
+        type: str
+        default: clients/
+        description: Local directory for downloaded client configs.
+      wireguard_download_serverkeys:
+        type: bool
+        default: false
+        description: Download server private, public and preshared keys to the controller.
+      wireguard_serverkeys_download_dir:
+        type: str
+        default: server/
+        description: Local directory for downloaded server keys.
+      wireguard_restore_serverkeys_dir:
+        type: str
+        default: ""
+        description: When set, keys are restored from this directory. The path must end with C(/).
+      wireguard_same_keys:
+        type: bool
+        default: false
+        description: Configure all servers with the same WireGuard keys.
+      wireguard_port:
+        type: int
+        default: 51820
+        description: Port WireGuard listens on.
+      wireguard_hostname:
+        type: str
+        description: Server hostname written into the client configs as Endpoint. Defaults to C(inventory_hostname).
+      wireguard_interface:
+        type: str
+        default: wg0
+        description: Name of the WireGuard interface.
+      wireguard_address:
+        type: str
+        default: 10.213.213.0/24
+        description: WireGuard subnet in CIDR notation.
+      wireguard_additional_routes:
+        type: list
+        elements: str
+        default: []
+        description: Additional networks added to the AllowedIPs of client configs.
+      wireguard_keepalive:
+        type: int
+        default: 25
+        description: Default PersistentKeepalive in seconds, used when not overridden per peer.
+      wireguard_client_interface_options:
+        type: dict
+        default: {}
+        description:
+          - Custom options rendered into the C([Interface]) section of every client config, for example C(MTU) or C(DNS).
+          - Lists are joined by C(, ) and a C(null) value removes the option.
+          - Can be overridden per peer with C(client_interface_options).
+      wireguard_client_peer_options:
+        type: dict
+        default: {}
+        description:
+          - Custom options rendered into the C([Peer]) section of every client config, for example C(PersistentKeepalive).
+          - Lists are joined by C(, ) and a C(null) value removes the option.
+          - Can be overridden per peer with C(client_peer_options).
+      wireguard_peers:
+        type: list
+        elements: dict
+        default: []
+        description: List of peers (clients).
+        options:
+          name:
+            type: str
+            required: true
+            description: Peer name, used as the client config file name.
+          allowed_ip:
+            type: str
+            required: true
+            description: IP address of the peer, with or without prefix (C(/32) is assumed when missing).
+          publickey:
+            type: str
+            required: true
+            description: Public key of the peer (44 characters, base64).
+          keepalive:
+            type: int
+            description: PersistentKeepalive for this peer. Defaults to C(wireguard_keepalive).
+          client_interface_options:
+            type: dict
+            description: Per-peer options for the C([Interface]) section, merged over C(wireguard_client_interface_options).
+          client_peer_options:
+            type: dict
+            description: Per-peer options for the C([Peer]) section, merged over C(wireguard_client_peer_options).
+      run_publickey_pre_check:
+        type: bool
+        default: true
+        description: Validate peer public keys (base64 and 44 characters) before the run.

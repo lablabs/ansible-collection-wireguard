@@ -10,8 +10,22 @@ jobs:
   pre-commit:
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+      with:
+        python-version: "3.11"
+
+    # pre-commit/action is no longer maintained and bundles actions/cache@v4 (Node 20),
+    # so pre-commit is installed and run directly.
+    - name: Install pre-commit
+      run: python -m pip install pre-commit
+
+    - name: Cache pre-commit environments
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.cache/pre-commit
+        key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
 
     - name: Run pre-commit
-      uses: pre-commit/action@v3.0.1
+      run: pre-commit run --all-files --show-diff-on-failure
