@@ -1,0 +1,9 @@
+# Tooling for developing and testing this collection
+-r requirements.txt
+# The declared minimum supported version is in meta/runtime.yml.
+ansible==11.2.0
+ansible-lint
+molecule
+molecule-plugins[docker]
+yamllint
+pre-commit

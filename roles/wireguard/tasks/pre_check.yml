@@ -3,7 +3,7 @@
 - name: Check if Public Key is valid base64 string
   ansible.builtin.assert:
     that:
-      - " item.publickey | b64decode "
+      - (item.publickey | b64decode) != ''
     fail_msg: "The Public Key for user {{ item.name }} is invalid."
   with_items: "{{ wireguard_peers }}"
 
