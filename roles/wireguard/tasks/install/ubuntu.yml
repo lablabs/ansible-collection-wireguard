@@ -3,7 +3,7 @@
   ansible.builtin.apt_repository:
     repo: "{{ wireguard_repo_url }}"
     state: present
-  when: wireguard_repo_url
+  when: wireguard_repo_url != ''
   tags:
     - wg-install
 

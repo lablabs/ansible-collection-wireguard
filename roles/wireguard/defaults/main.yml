@@ -70,6 +70,20 @@ wireguard_systemd_network:
 
 wireguard_keepalive: 25
 
+# Custom options rendered into client configs (clients.conf.j2).
+# Keys are written as-is, lists are joined by ", ". A value of null removes the option.
+# Can be overridden/extended per peer via `client_interface_options` / `client_peer_options`
+# in `wireguard_peers` (per-peer values win over these global ones).
+# [Interface] section of the client config
+wireguard_client_interface_options: {}
+#  MTU: 1380
+#  DNS:
+#    - 10.224.0.2
+#    - 1.1.1.1
+# [Peer] section of the client config (takes precedence over wireguard_keepalive)
+wireguard_client_peer_options: {}
+#  PersistentKeepalive: 25
+
 # Additional IPs allowed to Wireguard
 # (Following list of IPs will be added to Wireguard AllowedIPs)
 wireguard_additional_routes: []
@@ -78,6 +92,11 @@ wireguard_peers: []
 # - name: user1
 #   allowed_ip: "10.213.213.2"
 #   publickey: "asdasdasdadsasdasd"
+#   client_interface_options:   # optional, merged over wireguard_client_interface_options
+#     DNS: 10.0.0.53
+#     MTU: null                 # null drops the global option for this peer
+#   client_peer_options:        # optional, merged over wireguard_client_peer_options
+#     PersistentKeepalive: 10
 # - name: user2
 #   allowed_ip: "10.213.213.3/32"
 #   publickey: "000000000000000000"

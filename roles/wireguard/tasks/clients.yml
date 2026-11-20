@@ -25,6 +25,18 @@
   vars:
     server_public_key: "{{ _pubkey_value['content'] | b64decode }}"
     preshared_key: "{{ _pskkey_value['content'] | b64decode }}"
+    # Definition of the current peer from wireguard_peers (carries per-peer client options)
+    _peer_def: "{{ wireguard_peers | selectattr('name', 'equalto', item.WireGuardPeer.0.FriendlyName) | first | default({}) }}"
+    # Backward compatibility: PersistentKeepalive was always rendered from peer.keepalive / wireguard_keepalive,
+    # so it stays as the base value, which client_peer_options can override (or drop with null).
+    _client_keepalive: "{{ _peer_def.keepalive | default(wireguard_keepalive) }}"
+    # Precedence of client options: per-peer > global > role defaults
+    _client_interface_options: >-
+      {{ wireguard_client_interface_options
+         | combine(_peer_def.client_interface_options | default({})) }}
+    _client_peer_options: >-
+      {{ {'PersistentKeepalive': _client_keepalive}
+         | combine(wireguard_client_peer_options, _peer_def.client_peer_options | default({})) }}
   loop: "{{ peers | list }}"
   notify:
     - Restart systemd-networkd

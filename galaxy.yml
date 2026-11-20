@@ -15,3 +15,10 @@ repository: https://github.com/lablabs/ansible-collection-wireguard
 documentation: https://github.com/lablabs/ansible-collection-wireguard
 homepage: https://www.lablabs.io
 issues: https://github.com/lablabs/ansible-collection-wireguard/issues
+# Tracked files that must not end up in the built collection tarball
+build_ignore:
+  - .github
+  - molecule
+  - .pre-commit-config.yaml
+  - .yamllint
+  - requirements-dev.txt

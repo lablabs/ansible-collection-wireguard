@@ -25,14 +25,28 @@
       - 172.11.0.0/16
       - 172.22.0.0/20
       - 172.33.0.0/16
+    wireguard_client_interface_options:
+      MTU: 1380
+      DNS:
+        - 1.1.1.1
+        - 8.8.8.8
     wireguard_peers:
+      # user1: global options only
       - name: user1
         allowed_ip: "10.213.213.2"
         publickey: "YXNhc21hc2Fhc3Npc2FzYXNhc2FzYXNhc2FzYXNhc3N=" # Fake Pub Key
+      # user2: legacy keepalive + per-peer DNS override
       - name: user2
         allowed_ip: "10.213.213.3/32"
         publickey: "YXNhc21hc2Fhc3Npc2FzYXNhc2FzYXNhc2FzYXNhc3N=" # Fake Pub Key
         keepalive: 30
+        client_interface_options:
+          DNS: 10.0.0.53
+      # user3: global MTU dropped + per-peer keepalive
       - name: user3
         allowed_ip: "10.213.213.50/30"
         publickey: "YXNhc21hc2Fhc3Npc2FzYXNhc2FzYXNhc2FzYXNhc3N=" # Fake Pub Key
+        client_interface_options:
+          MTU: null
+        client_peer_options:
+          PersistentKeepalive: 10

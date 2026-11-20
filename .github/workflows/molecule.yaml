@@ -17,37 +17,44 @@ on:
 jobs:
   standalone:
     name: Test Wireguard Ansible Role
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       max-parallel: 4
       matrix:
         config:
-          - image: "rockylinux8"
-            tag: "latest"
-          - image: "ubuntu2004"
-            tag: "latest"
           - image: "ubuntu2204"
             tag: "latest"
+          - image: "ubuntu2404"
+            tag: "latest"
     steps:
-      - name: Fix Git safe directories issue when in containers
-        # cf: https://github.com/actions/checkout/issues/760
-        run: git config --global --add safe.directory /__w/ansible-collection-wireguard/ansible-collection-wireguard
-
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          path: "${{ github.repository }}"
+          python-version: "3.11"
+
+      # robertdebock/molecule-action ships an old ansible-core that cannot talk to the
+      # current Galaxy API, so Molecule is installed and run directly instead.
+      - name: Install Molecule and Ansible
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
 
       - name: Molecule for Ansible
-        uses: robertdebock/molecule-action@4.0.9
-        with:
+        run: molecule test
+        env:
           image: ${{ matrix.config.image }}
           tag: ${{ matrix.config.tag }}
+          PY_COLORS: "1"
+          ANSIBLE_FORCE_COLOR: "1"
 
       - name: Upload configs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: client-configs
+          name: client-configs-${{ matrix.config.image }}
           path: clients/
           retention-days: 1
+          if-no-files-found: ignore

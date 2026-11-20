@@ -1,13 +1,19 @@
+{# Renders a dict of options; lists are joined by ", ", null values are skipped #}
+{% macro render_options(options) %}
+{% for key, value in options.items() if value is not none %}
+{{ key }} = {{ value | join(', ') if value is not string and value is iterable else value }}
+{% endfor %}
+{% endmacro %}
 #
 # User public key: "{{ item.WireGuardPeer | json_query('[?"PublicKey"].PublicKey') | first }}"
 
 [Interface]
 PrivateKey = [User Private Key]
 Address = {{ item.WireGuardPeer | json_query('[?"AllowedIPs"].AllowedIPs') | first }}
-
+{{ render_options(_client_interface_options) }}
 [Peer]
 PublicKey = {{ server_public_key }}
 PresharedKey = {{ preshared_key }}
 AllowedIPs = {{ wireguard_peers_allowed_ips }}
 Endpoint = {{ wireguard_hostname }}:{{ wireguard_port }}
-PersistentKeepalive = {{ (item.WireGuardPeer | json_query('[?"PersistentKeepalive"].PersistentKeepalive') | first) | default(wireguard_keepalive) }}
+{{ render_options(_client_peer_options) }}

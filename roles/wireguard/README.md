@@ -87,6 +87,15 @@ wireguard_systemd_network:
 
 wireguard_keepalive: 25
 
+# Custom options for client configs. Interface options go to [Interface], peer options to [Peer].
+# Lists are joined by ", ", null removes an option. Override per peer with
+# `client_interface_options` / `client_peer_options` (per-peer > global > wireguard_keepalive).
+wireguard_client_interface_options: {}
+#  MTU: 1380
+#  DNS: [10.224.0.2, 1.1.1.1]
+wireguard_client_peer_options: {}
+#  PersistentKeepalive: 25
+
 # Additional IPs allowed to Wireguard
 # (Following list of IPs will be added to Wireguard AllowedIPs)
 wireguard_additional_routes: []
@@ -99,6 +108,8 @@ wireguard_peers: []
 #   allowed_ip: "10.213.213.3/32"
 #   publickey: "000000000000000000"
 #   keepalive: 30
+#   client_interface_options:
+#     DNS: 10.0.0.53
 # - name: user3
 #   allowed_ip: "10.213.213.50/30"
 #   publickey: "111111111111111111"
