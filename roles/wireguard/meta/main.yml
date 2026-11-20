@@ -12,6 +12,7 @@ galaxy_info:
         - bionic
         - focal
         - jammy
+        - noble
     - name: Debian
       versions:
         - stretch

@@ -1,0 +1,8 @@
+---
+# Ubuntu 24.04 has no wireguard-dkms package, the WireGuard module is part of the kernel.
+_distro_packages:
+  - wireguard
+_repo_url: ""
+
+wireguard_packages:
+  - wireguard-tools

@@ -15,6 +15,7 @@ This collection will:
 
 ## Supported (tested) Linux Distributions
 
+- Ubuntu 24.04 LTS
 - Ubuntu 22.04 LTS
 
 ### Eventually supported but not tested
